@@ -1,5 +1,8 @@
 package com.web_development_class.formulate_backend.Domain.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.web_development_class.formulate_backend.Domain.DTO.QuestionAnswerDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,11 +36,14 @@ public class QuestionAnswer {
     @JoinColumn(name = "question", nullable = false)
     private Question question;
 
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "form_id", nullable = false)
-    private Form form;
+    @JoinColumn(name = "form_answer_id")
+    private FormAnswer formAnswer;
 
-    public void update(QuestionAnswer questionAnswer) {
-        this.description = questionAnswer.description;
+    public QuestionAnswer(QuestionAnswerDTO newQuestionAnswer, Form form) {
+        this.id = newQuestionAnswer.id();
+        this.question = new Question(newQuestionAnswer.question(), form);
+        this.description = newQuestionAnswer.description();
     }
 }

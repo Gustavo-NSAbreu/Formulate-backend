@@ -5,7 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.web_development_class.formulate_backend.Domain.DTO.FormDTO;
-import com.web_development_class.formulate_backend.Domain.DTO.FormRequestDTO;
+import com.web_development_class.formulate_backend.Domain.DTO.FormRequestCreationDTO;
+import com.web_development_class.formulate_backend.Domain.DTO.FormRequestUpdateDTO;
 import com.web_development_class.formulate_backend.Domain.DTO.FormResponseDTO;
 import com.web_development_class.formulate_backend.Domain.DTO.QuestionDTO;
 import com.web_development_class.formulate_backend.Domain.Entity.Form;
@@ -21,15 +22,16 @@ public class FormService {
     
     @Autowired
     private QuestionRepository questionRepository;
-
+    
     public List<Form> findAll() {
         List<Form> forms = repository.findAll();
         return forms;
     }
 
-    public List<Form> findFormWithQuestions() {
-        List<Form> forms = repository.findAll();
-        return forms;
+    public FormResponseDTO findFormWithQuestions(long id) {
+        Form form = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Form not found"));
+        List<Question> questions = questionRepository.findAllByForm(form);
+        return new FormResponseDTO(form, questions);
     }
 
     public Form findById(Long id) {
@@ -40,13 +42,13 @@ public class FormService {
         return repository.save(newForm);
     }
 
-    public Form createWithQuestions(FormResponseDTO newForm) {
-        Form createdForm = repository.save(newForm.form());
-        for (Question question : newForm.questions()) {
-            question.setForm(createdForm);
-            questionRepository.save(question);
+    public Form createWithQuestions(FormRequestCreationDTO request) {
+        Form form = repository.save(request.form());
+        for (QuestionDTO question : request.questions()) {
+            Question createdQuestion = new Question(question, form);
+            questionRepository.save(createdQuestion);
         }
-        return repository.save(createdForm);
+        return form;
     }
 
     public Form update(FormDTO updatedForm) {
@@ -56,11 +58,11 @@ public class FormService {
         return repository.save(form);
     }
 
-    public Form updateWithQuestion(FormRequestDTO updatedForm) {
-        Form formToUpdate = new Form(updatedForm.form());
+    public Form updateWithQuestion(FormRequestUpdateDTO request) {
+        Form formToUpdate = new Form(request.form());
         Form form = repository.findById(formToUpdate.getId()).orElseThrow(() -> new IllegalArgumentException("Form not found"));
         form.update(formToUpdate);
-        for (QuestionDTO question : updatedForm.questions()) {
+        for (QuestionDTO question : request.questions()) {
             Question questionToUpdate = new Question(question, form);
             questionRepository.save(questionToUpdate);
         }
@@ -69,7 +71,7 @@ public class FormService {
 
     public void delete(Long id) {
         Form form = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Form not found"));
-        repository.deleteById(id);
         questionRepository.deleteAllByForm(form);
+        repository.deleteById(id);
     }
 }

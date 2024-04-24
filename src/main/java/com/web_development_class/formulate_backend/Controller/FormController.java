@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.web_development_class.formulate_backend.Domain.DTO.FormDTO;
-import com.web_development_class.formulate_backend.Domain.DTO.FormRequestDTO;
+import com.web_development_class.formulate_backend.Domain.DTO.FormRequestCreationDTO;
+import com.web_development_class.formulate_backend.Domain.DTO.FormRequestUpdateDTO;
 import com.web_development_class.formulate_backend.Domain.DTO.FormResponseDTO;
 import com.web_development_class.formulate_backend.Domain.Entity.Form;
 import com.web_development_class.formulate_backend.Service.FormService;
@@ -38,9 +39,9 @@ public class FormController {
         return ResponseEntity.ok().body(forms);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Form> findFormWithQuestions(@PathVariable Long id) {
-        Form form = service.findById(id);
+    @GetMapping("/{id}/questions")
+    public ResponseEntity<FormResponseDTO> findFormWithQuestions(@PathVariable Long id) {
+        FormResponseDTO form = service.findFormWithQuestions(id);
         return ResponseEntity.ok().body(form);
     }
 
@@ -53,7 +54,7 @@ public class FormController {
 
     @PostMapping("/questions")
     @Transactional
-    public ResponseEntity<Form> createWIthQuestions(@RequestBody FormResponseDTO newForm) {
+    public ResponseEntity<Form> createWIthQuestions(@RequestBody FormRequestCreationDTO newForm) {
         Form form = service.createWithQuestions(newForm);
         return ResponseEntity.ok().body(form);
     }
@@ -74,14 +75,14 @@ public class FormController {
 
     @PutMapping("/questions")
     @Transactional
-    public ResponseEntity<Form> updateWithQuestionPut(@RequestBody FormRequestDTO updatedForm) {
+    public ResponseEntity<Form> updateWithQuestionPut(@RequestBody FormRequestUpdateDTO updatedForm) {
         Form form = service.updateWithQuestion(updatedForm);
         return ResponseEntity.ok().body(form);
     }
 
     @PatchMapping("/questions")
     @Transactional
-    public ResponseEntity<Form> updateWithQuestionPatch(@RequestBody FormRequestDTO updatedForm) {
+    public ResponseEntity<Form> updateWithQuestionPatch(@RequestBody FormRequestUpdateDTO updatedForm) {
         Form form = service.updateWithQuestion(updatedForm);
         return ResponseEntity.ok().body(form);
     }

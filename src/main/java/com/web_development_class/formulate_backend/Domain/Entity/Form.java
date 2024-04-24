@@ -47,7 +47,7 @@ public class Form {
     private Timestamp createdAt;
     
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "\"user\"", nullable = false)
     private User user;
     
     @JsonIgnore

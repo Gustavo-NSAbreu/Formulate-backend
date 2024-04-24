@@ -40,13 +40,13 @@ public class Question {
     @JsonIgnore
     private Form form;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "question")
     private Set<QuestionAnswer> questionAnswers;
 
     public Question(QuestionDTO question, Form form) {
         this.id = question.id();
         this.description = question.description();
-        this.form = question.form();
         this.form = form;
     }
 

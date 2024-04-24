@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.web_development_class.formulate_backend.Domain.DTO.FormAnswerCreationDTO;
+import com.web_development_class.formulate_backend.Domain.DTO.FormAnswerDTO;
 import com.web_development_class.formulate_backend.Domain.Entity.FormAnswer;
 import com.web_development_class.formulate_backend.Service.FormAnswerService;
 
@@ -20,7 +22,7 @@ import jakarta.transaction.Transactional;
 
 
 @RestController
-@RequestMapping("/api/v1/formAnswers")
+@RequestMapping("/api/v1/form_answers")
 @CrossOrigin(origins = "*")
 public class FormAnswerController {
         
@@ -34,15 +36,15 @@ public class FormAnswerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FormAnswer> findById(@PathVariable Long id) {
-        FormAnswer formAnswer = service.findById(id);
+    public ResponseEntity<FormAnswerDTO> findById(@PathVariable Long id) {
+        FormAnswerDTO formAnswer = service.findById(id);
         return ResponseEntity.ok().body(formAnswer);
     }
 
     @PostMapping
     @Transactional
-    public ResponseEntity<FormAnswer> create(@RequestBody FormAnswer newFormAnswer) {
-        FormAnswer formAnswer = service.create(newFormAnswer);
+    public ResponseEntity<FormAnswer> createWithAnswers(@RequestBody FormAnswerCreationDTO request) {
+        FormAnswer formAnswer = service.createWithAnswers(request);
         return ResponseEntity.ok().body(formAnswer);
     }
 
